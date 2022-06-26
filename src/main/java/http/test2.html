@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>document</title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="author" content="George">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+</head>
+<body>
+<form action="http://localhost:9999?value=get-value" method="post" enctype="multipart/form-data" >
+    <h1>Test html №1</h1><!--заголовок-->
+    <input> <!--никуда не отправляется -->
+    <input name="value" placeholder="name1">
+    <input name="value" placeholder="name2"> <!--согласно синтаксису html могут быть поля с одинаковым значением -->
+    <input type="password" name="password" placeholder="password"><!-- вводимый текст **** -->
+    <input type="email" name="email" placeholder="email"> <!-- требует @ -->
+    <input type="file" name="image"><!-- для отправки файлов-->
+    <button>Send</button>
+    <!--Согласно спецификации, только значения полей ввода, имеющие атрибут name, отправляются на сервер -->
+</form>
+</body>
+</html>
