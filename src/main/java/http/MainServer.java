@@ -5,6 +5,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +36,8 @@ public class MainServer {
         System.out.println(Thread.currentThread().getName());
         try (
                 final var in = new BufferedInputStream(socket.getInputStream());
-                final var out = new BufferedOutputStream(socket.getOutputStream())
+                final var out = new BufferedOutputStream(socket.getOutputStream());
+
         ) {
             final var limit = 4096;//лимит чтения запроса
             in.mark(limit);
@@ -63,14 +65,12 @@ public class MainServer {
                 badRequest(out);
                 return;
             }
-            System.out.println(method);
 
             final var path = requestLine[1];
             if (!path.startsWith("/")) {
                 badRequest(out);
                 return;
             }
-            System.out.println(path);
 
             // ищем заголовки
             final var headersDelimiter = new byte[]{'\r', '\n', '\r', '\n'};
@@ -87,7 +87,12 @@ public class MainServer {
 
             final var headersBytes = in.readNBytes(headersEnd - headersStart);
             final var headers = Arrays.asList(new String(headersBytes).split("\r\n"));
-            System.out.println(headers);
+
+            var request = new Request()
+                    .setMethod(method)
+                    .setPathAndCreateUri(path)
+                    .setProtocol(requestLine[2])
+                    .setHeaders(headers);
 
             if (!method.equals(GET)) {
                 in.skip(headersDelimiter.length);
@@ -98,7 +103,8 @@ public class MainServer {
                     final var bodyBytes = in.readNBytes(length);
 
                     final var body = new String(bodyBytes);
-                    System.out.println(body);
+                    //System.out.println(body);
+                    System.out.println(request.getQueryParams());
                 }
             }
             out.write((
@@ -111,6 +117,8 @@ public class MainServer {
 
         } catch (IOException e) {
             System.out.println(e.getMessage());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
         }
     }
 
